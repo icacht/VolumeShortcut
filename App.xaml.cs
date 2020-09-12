@@ -13,5 +13,23 @@ namespace VolumeShortcut
     /// </summary>
     public partial class App : Application
     {
+        KeyHooker hooker;
+
+        private void StartupApplication(object sender, StartupEventArgs e)
+        {
+            hooker = new KeyHooker();
+            hooker.KeyDownEvent += KeyDownEventProcedure;
+            hooker.Hook();
+        }
+        
+        private void ExitApplication(object sender, ExitEventArgs e)
+        {
+            hooker.Dispose();
+        }
+
+        private void KeyDownEventProcedure(object obj, KeyHooker.KeyEventArgs e)
+        {
+            Console.WriteLine($"Keydown KeyCode {e.KeyCode}");
+        }
     }
 }
