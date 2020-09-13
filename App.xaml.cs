@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace VolumeShortcut
 {
@@ -30,6 +31,18 @@ namespace VolumeShortcut
         private void KeyDownEventProcedure(object obj, KeyHooker.KeyEventArgs e)
         {
             Console.WriteLine($"Keydown KeyCode {e.KeyCode}");
+            if (e.IsVirtualInput)
+            {
+                return;
+            }
+
+            if (e.KeyCode == KeyInterop.VirtualKeyFromKey(Key.A))
+            {
+                return;
+            }
+
+            KeyInputer.KeyDownUp((uint)KeyInterop.VirtualKeyFromKey(Key.A));
+            e.IsPrevent = true;
         }
     }
 }
