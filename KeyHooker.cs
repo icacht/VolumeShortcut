@@ -41,12 +41,14 @@ namespace VolumeShortcut
         {
             public uint KeyCode { get; }
             public bool IsVirtualInput { get; }
+            public bool IsALTDown { get; }
             public bool IsPrevent { get; set; } = false;
 
-            public KeyEventArgs(uint keyCode, bool isVirtualInput)
+            public KeyEventArgs(uint keyCode, bool isVirtualInput, bool isALTDown)
             {
                 KeyCode = keyCode;
                 IsVirtualInput = isVirtualInput;
+                IsALTDown = isALTDown;
             }
         }
 
@@ -99,7 +101,9 @@ namespace VolumeShortcut
 
         private bool KeyboardProcedure(int message, API.KBDLLHOOKSTRUCT param)
         {
-            var args = new KeyEventArgs(param.vkCode, (uint)param.dwExtraInfo != 0);
+            var isInjected = ((param.flags & (1<<1)) | (param.flags & (1<<4))) != 0;
+            var isALTDown = (param.flags & (1<<5)) != 0;
+            var args = new KeyEventArgs(param.vkCode, isInjected, isALTDown);
             if (message == API.WM_KEYDOWN || message == API.WM_SYSKEYDOWN)
             {
                 KeyDownEvent?.Invoke(this, args);

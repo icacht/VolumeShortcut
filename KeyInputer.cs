@@ -61,6 +61,8 @@ namespace VolumeShortcut
             internal static extern uint SendInput(uint cInputs, INPUT pInputs, int cbSize);
             [DllImport("user32.dll", CharSet = CharSet.Auto)]
             internal static extern uint MapVirtualKey(uint uCode, uint uMapType);
+            [DllImport("user32.dll")]
+            internal static extern IntPtr GetMessageExtraInfo();
         }
 
         public static void KeyDownUp(uint keyCode, bool isExtend = false)
@@ -76,7 +78,7 @@ namespace VolumeShortcut
                 wScan = (ushort)API.MapVirtualKey(keyCode, API.MAPVK_VK_TO_VSC),
                 dwFlags = extend_value,
                 time = 0,
-                dwExtraInfo = (IntPtr)0x3456  // 適当な値
+                dwExtraInfo = API.GetMessageExtraInfo()
             };
 
             API.SendInput(1, input, Marshal.SizeOf(input));
