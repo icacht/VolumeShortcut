@@ -1,10 +1,13 @@
 using System;
 using System.Windows;
 using System.Windows.Input;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace VolumeShortcut
 {
     using KeyCombination = System.ValueTuple<int, bool, bool, bool>;
+    public delegate void KeyCombinationUpdateEventHandler(KeyCombination up, KeyCombination down);
 
     #nullable enable
     public class RelayCommand : ICommand
@@ -42,12 +45,14 @@ namespace VolumeShortcut
 
     public sealed class MainWindowViewModel
     {
-        public class KeyPropety
+        public class KeyPropety : INotifyPropertyChanged
         {
             public int Key { get; set; }
             public bool IsShift { get; set; }
             public bool IsCtrl { get; set; }
             public bool IsAlt { get; set; }
+
+            public event PropertyChangedEventHandler PropertyChanged;
 
             public KeyCombination GetCombination()
             {
@@ -61,20 +66,34 @@ namespace VolumeShortcut
                 IsShift = isShift;
                 IsCtrl = isCtrl;
                 IsAlt = isAlt;
+
+                NotifyPropertyChanged(nameof(Key));
+                NotifyPropertyChanged(nameof(IsShift));
+                NotifyPropertyChanged(nameof(IsCtrl));
+                NotifyPropertyChanged(nameof(IsAlt));
             }
+
+            private void NotifyPropertyChanged([CallerMemberName]string propertyName = null)
+                => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public KeyPropety VolumeUp { get; }
         public KeyPropety VolumeDown { get; }
-        public ICommand ApplyCommand { get; private set; } = new RelayCommand(
-            null,
-            (parameter) => { MessageBox.Show("Apply"); }
-        );
+        public ICommand ApplyCommand { get; private set; }
+
+        public event KeyCombinationUpdateEventHandler KeyCombinationUpdateEvent;
 
         public MainWindowViewModel()
         {
             VolumeUp = new KeyPropety();
             VolumeDown = new KeyPropety();
+            ApplyCommand = new RelayCommand(
+                null,
+                (parameter) =>
+                {
+                    KeyCombinationUpdateEvent?.Invoke(VolumeUp.GetCombination(), VolumeDown.GetCombination());
+                }
+            );
         }
 
         public void SetProperty(KeyCombination volumeUp, KeyCombination volumeDown)

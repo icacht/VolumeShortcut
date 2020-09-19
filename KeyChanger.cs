@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 
 namespace VolumeShortcut
 {
     // (keycode, shift, ctrl, alt)
-    using KeyCombination = System.ValueTuple<int, bool, bool, bool>;
+    using KeyCombination = ValueTuple<int, bool, bool, bool>;
 
     internal class KeyChanger
     {
@@ -19,15 +20,14 @@ namespace VolumeShortcut
             internal static extern short GetAsyncKeyState(int vKey);
         }
 
-        private Dictionary<KeyCombination, int> KeyCombinationDict;
+        private ConcurrentDictionary<KeyCombination, int> KeyCombinationDict
+            = new ConcurrentDictionary<KeyCombination, int>();
 
-        public KeyChanger()
+        internal void KeyCombinationUpdate(KeyCombination up, KeyCombination down)
         {
-            KeyCombinationDict = new Dictionary<KeyCombination, int>()
-            {
-                { (KeyInterop.VirtualKeyFromKey(Key.F8), true, true, false), KeyInterop.VirtualKeyFromKey(Key.VolumeUp) },
-                { (KeyInterop.VirtualKeyFromKey(Key.F7), true, true, false), KeyInterop.VirtualKeyFromKey(Key.VolumeDown) },
-            };
+            KeyCombinationDict.Clear();
+            KeyCombinationDict.TryAdd(up, KeyInterop.VirtualKeyFromKey(Key.VolumeUp));
+            KeyCombinationDict.TryAdd(down, KeyInterop.VirtualKeyFromKey(Key.VolumeDown));
         }
 
         internal void KeyDownEventProcedure(object obj, KeyHooker.KeyEventArgs e)

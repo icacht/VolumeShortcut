@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Title="Setting"
         SizeToContent = "WidthAndHeight"
-        ResizeMode="NoResize"
-        Name="window">
+        ResizeMode="NoResize">
     <Window.Resources>
         <Style TargetType="CheckBox">
             <Setter Property="Margin" Value="5,5" />
