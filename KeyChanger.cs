@@ -23,7 +23,7 @@ namespace VolumeShortcut
         private ConcurrentDictionary<KeyCombination, int> KeyCombinationDict
             = new ConcurrentDictionary<KeyCombination, int>();
 
-        internal void KeyCombinationUpdate(KeyCombination up, KeyCombination down)
+        internal void KeyCombinationUpdate(in KeyCombination up, in KeyCombination down)
         {
             KeyCombinationDict.Clear();
             KeyCombinationDict.TryAdd(up, KeyInterop.VirtualKeyFromKey(Key.VolumeUp));

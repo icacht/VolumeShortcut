@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 namespace VolumeShortcut
 {
     using KeyCombination = System.ValueTuple<int, bool, bool, bool>;
-    public delegate void KeyCombinationUpdateEventHandler(KeyCombination up, KeyCombination down);
+    public delegate void KeyCombinationUpdateEventHandler(in KeyCombination up, in KeyCombination down);
 
     #nullable enable
     public class RelayCommand : ICommand
@@ -59,13 +59,9 @@ namespace VolumeShortcut
                 return (Key, IsShift, IsCtrl, IsAlt);
             }
 
-            public void SetProperty(KeyCombination combination)
+            public void SetProperty(in KeyCombination combination)
             {
-                (var keyCode, var isShift, var isCtrl, var isAlt) = combination;
-                Key = keyCode;
-                IsShift = isShift;
-                IsCtrl = isCtrl;
-                IsAlt = isAlt;
+                (Key, IsShift, IsCtrl, IsAlt) = combination;
 
                 NotifyPropertyChanged(nameof(Key));
                 NotifyPropertyChanged(nameof(IsShift));
@@ -96,7 +92,7 @@ namespace VolumeShortcut
             );
         }
 
-        public void SetProperty(KeyCombination volumeUp, KeyCombination volumeDown)
+        public void SetProperty(in KeyCombination volumeUp, in KeyCombination volumeDown)
         {
             VolumeUp.SetProperty(volumeUp);
             VolumeDown.SetProperty(volumeDown);

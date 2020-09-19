@@ -9,6 +9,8 @@ using System.Reflection;
 
 namespace VolumeShortcut
 {
+    using KeyCombination = ValueTuple<int, bool, bool, bool>;
+
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
@@ -18,6 +20,7 @@ namespace VolumeShortcut
         private KeyChanger changer;
         private MainWindow mainWindow;
         private System.Windows.Forms.NotifyIcon notifyIcon;
+        private readonly string SettingFileName = "Setting.json";
 
         private void StartupApplication(object sender, StartupEventArgs e)
         {
@@ -28,15 +31,16 @@ namespace VolumeShortcut
 
             mainWindow = new MainWindow();
             var vm = ((MainWindowViewModel)MainWindow.DataContext);
-            vm.KeyCombinationUpdateEvent += changer.KeyCombinationUpdate;
 
-            var upCombination = ValueTuple.Create(0x77, true, true, false);
-            var downCombination = ValueTuple.Create(0x76, true, true, false);
+            (var upCombination, var downCombination) = SettingAccessor.ReadSetting(SettingFileName);
             vm.SetProperty(upCombination, downCombination);
+
+            vm.KeyCombinationUpdateEvent += changer.KeyCombinationUpdate;
             if (vm.ApplyCommand.CanExecute(null))
             {
                 vm.ApplyCommand.Execute(null);
             }
+            vm.KeyCombinationUpdateEvent += SaveSetting;
 
             var menu = new System.Windows.Forms.ContextMenuStrip();
             foreach(var item in new System.Windows.Forms.ToolStripMenuItem[]
@@ -65,6 +69,11 @@ namespace VolumeShortcut
             notifyIcon.DoubleClick += WindowShowEvent;
 
             ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+        }
+
+        private void SaveSetting(in KeyCombination up, in KeyCombination down)
+        {
+            SettingAccessor.WriteSetting(SettingFileName, up, down);
         }
 
         private void ExitApplication(object sender, ExitEventArgs e)
