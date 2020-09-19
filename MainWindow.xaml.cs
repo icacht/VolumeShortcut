@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace VolumeShortcut
 {
@@ -23,6 +24,30 @@ namespace VolumeShortcut
         public MainWindow()
         {
             InitializeComponent();
+            minimizedWindow();
+        }
+
+        public void ShowWindow()
+        {
+            if(WindowState == System.Windows.WindowState.Minimized)
+            {
+                WindowState = System.Windows.WindowState.Normal;
+            }
+            Show();
+            Activate();
+            ShowInTaskbar = true;
+        }
+
+        private void minimizedWindow()
+        {
+            WindowState = WindowState.Minimized;
+            ShowInTaskbar = false;
+        }
+
+        private void ClosingWindow(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true;
+            minimizedWindow();
         }
     }
 }
