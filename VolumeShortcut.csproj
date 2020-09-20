@@ -4,6 +4,29 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+
+    <Authors>icacht</Authors>
+    <Copyright>Copyright (c) 2020 icacht</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>$(NetCoreTargetingPackRoot)/Microsoft.WindowsDesktop.App.Ref/3.1.0/ref/$(TargetFramework)/System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing.Common">
+      <HintPath>$(NetCoreTargetingPackRoot)/Microsoft.WindowsDesktop.App.Ref/3.1.0/ref/$(TargetFramework)/System.Drawing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <HintPath>$(NetCoreTargetingPackRoot)/Microsoft.WindowsDesktop.App.Ref/3.1.0/ref/$(TargetFramework)/System.Drawing.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="assets/icon.ico" />
+    <EmbeddedResource Include="assets/icon.ico" />
+  </ItemGroup>
 
 </Project>
